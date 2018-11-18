@@ -1,35 +1,10 @@
 #!/usr/bin/python3
 
-import sys, threading
+import sys
+import threading
 
-sys.setrecursionlimit(10**7) # max depth of recursion
-threading.stack_size(2**25)  # new thread will get stack of such size
-
-class Node:
-
-  def __init__(self, data):
-    self.data = data
-    self.left = None
-    self.right = None
-
-  def insert(self, value):
-    if value <= self.data:
-      if self.left is None:
-        self.left = Node(value)
-      else:
-        self.left.insert(value)
-    else:
-      if self.right is None:
-        self.right = Node(value)
-      else:
-        self.right.insert(value)
-
-  def in_order(self, result):
-    if self.left is not None:
-      self.left.in_order(result)
-    result.append(self.data)
-    if self.right is not None:
-      self.right.in_order(result)
+sys.setrecursionlimit(10 ** 7)  # max depth of recursion
+threading.stack_size(2 ** 25)  # new thread will get stack of such size
 
 
 def in_order_recursion(i, result, left, right, key):
@@ -40,53 +15,41 @@ def in_order_recursion(i, result, left, right, key):
         in_order_recursion(right[i], result, left, right, key)
 
 
-def IsBinarySearchTree(tree):
-  # Implement correct algorithm here
+def is_binary_search_tree(tree):
+    n = len(tree)
 
-  n = len(tree)
+    if n == 0:
+        return True
 
-  if n == 0:
+    key = [0 for i in range(n)]
+    left = [0 for i in range(n)]
+    right = [0 for i in range(n)]
+
+    for i in range(n):
+        key[i] = tree[i][0]
+        left[i] = tree[i][1]
+        right[i] = tree[i][2]
+
+    result_test = []
+
+    in_order_recursion(0, result_test, left, right, key)
+
+    for i in range(1, len(key)):
+        if result_test[i] < result_test[i - 1]:
+            return False
+
     return True
 
-  key = [0 for i in range(n)]
-  left = [0 for i in range(n)]
-  right = [0 for i in range(n)]
-
-  for i in range(n):
-      [a, b, c] = tree[i]
-      key[i] = a
-      left[i] = b
-      right[i] = c
-
-  result_test = []
-  result_correct = []
-
-  in_order_recursion(0, result_test, left, right, key)
-
-  node = Node(key[0])
-  for i in range(1, len(key)):
-    node.insert(key[i])
-
-  node.in_order(result_correct)
-
-  count = 0
-  for i in range(len(result_correct)):
-    if result_test[i] == result_correct[i]:
-      count = count + 1
-
-  if count == len(result_correct):
-    return True
-  else:
-    return False
 
 def main():
-  nodes = int(sys.stdin.readline().strip())
-  tree = []
-  for i in range(nodes):
-    tree.append(list(map(int, sys.stdin.readline().strip().split())))
-  if IsBinarySearchTree(tree):
-    print("CORRECT")
-  else:
-    print("INCORRECT")
+    nodes = int(sys.stdin.readline().strip())
+    tree = []
+    for i in range(nodes):
+        tree.append(list(map(int, sys.stdin.readline().strip().split())))
+    if is_binary_search_tree(tree):
+        print("CORRECT")
+    else:
+        print("INCORRECT")
+
 
 threading.Thread(target=main).start()
